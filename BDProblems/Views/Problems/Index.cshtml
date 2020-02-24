@@ -1,0 +1,47 @@
+﻿@model IEnumerable<BDProblems.Problem>
+
+@{
+    ViewData["Title"] = "Задачі за темами";
+}
+
+    <h1>Задачі за темою @ViewBag.ThemeName</h1>
+
+<p>
+    @Html.ActionLink("Додати задачу", "Create")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Statement)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Source)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Statement)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Level.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Source.SourceName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Про задачу</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
