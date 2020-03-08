@@ -1,24 +1,39 @@
-﻿@model BDProblems.Level
+﻿@model IEnumerable<BDProblems.Problem>
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Problems ordered by levels";
 }
 
-<h1>Details</h1>
+<p><h1>Problems of @ViewBag.LevelName</h1></p>
 
-<div>
-    <h4>Level</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<p>
+    <div class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Problems")'">
+        Create new problem
+    </div>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Statement)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Statement)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "Problems", new { id = item.Id }) |
+                    @Html.ActionLink("Info", "Details", "Problems", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", "Problems", new { id = item.Id })
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

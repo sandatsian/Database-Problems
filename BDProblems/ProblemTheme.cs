@@ -14,8 +14,9 @@ namespace BDProblems
         public int? ThemeId { get; set; }
 
        
-        public virtual Problem Problem { get; set; }
+        public Problem Problem { get; set; }
         
-        public virtual Theme Theme { get; set; }
+        public Theme Theme { get; set; }
+        
     }
 }

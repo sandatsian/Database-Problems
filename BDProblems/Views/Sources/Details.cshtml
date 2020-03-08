@@ -1,0 +1,51 @@
+﻿@model IEnumerable<BDProblems.Problem>
+
+@{
+    ViewData["Title"] = "Problems ordered by sources";
+}
+
+    <p><h1>Problems of @ViewBag.SourceName</h1></p>
+
+<p>
+    <div class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Problems")'">
+        Create new problem
+    </div>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Statement)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Source)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Statement)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Level.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Source.SourceName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "Problems", new { id = item.Id }) |
+                    @Html.ActionLink("Info", "Details", "Problems", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", "Problems", new { id = item.Id })
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

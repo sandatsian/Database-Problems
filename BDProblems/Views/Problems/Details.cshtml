@@ -1,10 +1,11 @@
 ﻿@model BDProblems.Problem
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Info about Problem";
 }
-
-<h1>Details</h1>
+    <p>
+        <h1>Info about Problem #@ViewBag.Id</h1>
+    </p>
 
 <div>
     <h4>Problem</h4>
@@ -26,7 +27,7 @@
             @Html.DisplayNameFor(model => model.Level)
         </dt>
         <dd class="col-sm-10">
-            @Html.ActionLink(Model.Level.Name, "Details", "Levels")
+            @Html.DisplayFor(model => model.Level.Name)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Source)
@@ -34,10 +35,32 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Source.SourceName)
         </dd>
-
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Source)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Source.Info)
+        </dd>
+        <dt class="col-sm-2">
+            Themes
+        </dt>
+        <dd class="col-sm-10">
+            @foreach (var item in Model.ProblemTheme)
+            {
+                @Html.DisplayFor(modelItem => item.Theme.Id)
+            }
+        <dt class="col-sm-2">
+            Grades
+        </dt>
+        <dd class="col-sm-10">
+            @foreach (var item in Model.ProblemGrade)
+            {
+                @Html.DisplayFor(modelItem => item.Grade.Id)
+            }
+        </dd>
     </dl>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">See all list</a>
 </div>

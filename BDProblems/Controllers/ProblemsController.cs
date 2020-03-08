@@ -20,18 +20,9 @@ namespace BDProblems.Controllers
         }
 
         // GET: Problems
-        public async Task<IActionResult> Index(int? id, string? name)
+        public async Task<IActionResult> Index()
         {
-            if (id == null) return RedirectToAction("Themes", "Index");
-            ViewBag.ThemeId = id;
-            ViewBag.ThemeName = name;
-            var problems = _context.Problem;
-            var problemsThemes = _context.ProblemTheme.Where(p => p.ThemeId == id);
-            var bDProblemsContext = from p in problems
-                                    join pt in problemsThemes on p.Id equals pt.ProblemId
-                                    select p;
-            
-            return View(await bDProblemsContext.ToListAsync());
+            return View(await _context.Problem.ToListAsync());
         }
 
         // GET: Problems/Details/5
@@ -45,31 +36,29 @@ namespace BDProblems.Controllers
             var themes = from t in _context.Theme
                          join pt in problemsThemes on t.Id equals pt.ThemeId
                          select t;
+
             var problem = await _context.Problem
                 .Include(p => p.Level)
                 .Include(p => p.Source)
+                
                 .FirstOrDefaultAsync(m => m.Id == id);
-            
+
             
             if (problem == null)
             {
                 return NotFound();
             }
-
+            ViewBag.Id = problem.Id;
             return View(problem);
             
         }
 
         // GET: Problems/Create
-        public IActionResult Create()
+        public IActionResult Create(int? themeId)
         {
-            ViewBag.Level = new SelectList(_context.Level, "Id", "Name");
-            //ViewBag.LevelName = _context.Level.Where(l => l.Id == levelId).FirstOrDefault().Name;
-            ViewBag.Source = new SelectList( _context.Source, "Id", "SourceName");
-            ViewBag.Themes = new SelectList(_context.Theme, "Id", "ThemeName");
-            ViewBag.Grades = new SelectList(_context.Grade, "Id", "GradeName");
-           
-            //ViewData["SourceId"] = new SelectList(_context.Source, "Id", "Source1");
+            ViewBag.ThemeId = themeId;
+            ViewBag.LevelId = new SelectList(_context.Level, "Id", "Name");
+            ViewBag.SourceId = new SelectList(_context.Source, "Id", "SourceName");
             return View();
         }
 
@@ -78,25 +67,31 @@ namespace BDProblems.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ICollection<ProblemGrade> ProblemGrade, ICollection<ProblemTheme> ProblemTheme, [Bind("Solution,Statement,LevelId,SourceId")] Problem problem)
+        public async Task<IActionResult> Create(int? themeId, [Bind("Solution,Statement,LevelId,SourceId")] Problem problem)
         {
-            using(_context.Database.BeginTransaction())
-            problem.ProblemTheme = ProblemTheme;
-            problem.ProblemGrade = ProblemGrade;
+            problem.Level = _context.Level.Where(l => l.Id == problem.LevelId).FirstOrDefault();
+            problem.Source = _context.Source.Where(s => s.Id == problem.SourceId).FirstOrDefault();
+            if (_context.Problem.Count().Equals(0))  problem.Id = 0;
+            else problem.Id = _context.Problem.Max(pt => pt.Id) + 1;
 
+            if (themeId != null)
+            {
+                int ptId = 0;
+                if (!_context.ProblemTheme.Count().Equals(0))
+                    ptId = _context.ProblemTheme.Max(pt => pt.Id) + 1;
+                problem.ProblemTheme.Add(new ProblemTheme { Id = ptId, ThemeId = themeId, ProblemId = problem.Id });
+            }
+          
+            
             if (ModelState.IsValid)
             {
-                _context.Add(problem);
+                    _context.Add(problem);
                 
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Themes");
                 //return RedirectToAction("Index", "Problems", new { id = themeId, name = _context.Theme.Where(t => t.Id == themeId).FirstOrDefault().ThemeName });  
             }
             return RedirectToAction("Index", "Themes");
-           //ViewData["LevelId"] = new SelectList(_context.Level, "Id", "LevelName", problem.LevelId);
-            //ViewData["SourceId"] = new SelectList(_context.Source, "Id", "Id", problem.SourceId);
-            //return View(problem);
-            //return RedirectToAction("Index", "Problems", new { id = themeId, name = _context.Theme.Where(t => t.Id == themeId).FirstOrDefault().ThemeName });
         }
 
         // GET: Problems/Edit/5
@@ -112,8 +107,8 @@ namespace BDProblems.Controllers
             {
                 return NotFound();
             }
-            ViewData["LevelId"] = new SelectList(_context.Level, "Id", "LevelName", problem.LevelId);
-            ViewData["SourceId"] = new SelectList(_context.Source, "Id", "Id", problem.SourceId);
+            ViewBag.LevelId = new SelectList(_context.Level, "Id", "Name", problem.LevelId);
+            ViewBag.SourceId = new SelectList(_context.Source, "Id", "SourceName", problem.SourceId);
             return View(problem);
         }
 
@@ -127,7 +122,7 @@ namespace BDProblems.Controllers
             {
                 return NotFound();
             }
-
+            
             if (ModelState.IsValid)
             {
                 try
@@ -147,12 +142,12 @@ namespace BDProblems.Controllers
                     }
                 }
                 //return RedirectToAction("Index", "Problems", new { id = levelId, name = _context.Level.Where(l => l.Id == levelId).FirstOrDefault().LevelName });
-                return View();
+                return RedirectToAction("Index", "Themes");
             }
-            ViewData["LevelId"] = new SelectList(_context.Level, "Id", "LevelName", problem.LevelId);
-            ViewData["SourceId"] = new SelectList(_context.Source, "Id", "Id", problem.SourceId);
+            //ViewData["LevelId"] = new SelectList(_context.Level, "Id", "Name", problem.LevelId);
+            //ViewData["SourceId"] = new SelectList(_context.Source, "Id", "SourceName", problem.SourceId);
             //return View(problem);
-            return RedirectToAction("Index" );//, "Problems", new { id = problem.LevelId, name = problem.LevelId });
+            return RedirectToAction("Index", "Themes");
         }
 
         // GET: Problems/Delete/5

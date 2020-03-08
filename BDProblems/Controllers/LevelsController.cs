@@ -27,20 +27,15 @@ namespace BDProblems.Controllers
         // GET: Levels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return RedirectToAction("Levels", "Index");
+            ViewBag.LevelId = id;
+            ViewBag.LevelName = _context.Level.Where(t => t.Id == id).FirstOrDefault().Name;
+            
+            var bDProblemsContext = _context.Problem.Where(p => p.LevelId == id);
+            
+            return View(await bDProblemsContext.ToListAsync());
 
-            var level = await _context.Level
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (level == null)
-            {
-                return NotFound();
-            }
 
-            //return View(level);
-            return RedirectToAction("Index", "Problems", new { id = level.Id, name = level.Name });
         }
 
         // GET: Levels/Create
@@ -54,8 +49,15 @@ namespace BDProblems.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LevelName")] Level level)
+        public async Task<IActionResult> Create([Bind("Name")] Level level)
         {
+            foreach (var item in _context.Level)
+            {
+                if (item.Name == level.Name)
+                    return RedirectToAction("Index");
+            }
+            if (_context.Level.Count().Equals(0)) level.Id = 0;
+                else level.Id = _context.Level.Max(pt => pt.Id) + 1;
             if (ModelState.IsValid)
             {
                 _context.Add(level);
@@ -86,13 +88,18 @@ namespace BDProblems.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LevelName")] Level level)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Level level)
         {
             if (id != level.Id)
             {
                 return NotFound();
             }
 
+            foreach (var item in _context.Level)
+            {
+                if (item.Name == level.Name)
+                    return RedirectToAction("Index");
+            }
             if (ModelState.IsValid)
             {
                 try

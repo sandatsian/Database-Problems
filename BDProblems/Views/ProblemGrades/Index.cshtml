@@ -1,0 +1,49 @@
+﻿@model IEnumerable<BDProblems.ProblemGrade>
+
+@{
+    ViewData["Title"] = "Problem's Grades";
+}
+
+    <p><h1>Problem's Grades</h1></p>
+
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Grade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Problem)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Grade.GradeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Problem.Id)
+                </td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    <div class="btn btn-success" onclick="location.href='@Url.Action("Create", "ProblemGrades", new { id = ViewBag.ProblemId })'">
+        Add new grade
+    </div>
+</p>
+<p>
+    @Html.ActionLink("Back to problem", "Details", "Problems", new { id = ViewBag.ProblemId })
+</p>
+<input type="hidden" value="@ViewBag.ProblemId" name="themeId" />

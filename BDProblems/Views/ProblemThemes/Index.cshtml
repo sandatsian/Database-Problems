@@ -1,0 +1,55 @@
+﻿@model IEnumerable<BDProblems.ProblemTheme>
+
+@{
+    ViewData["Title"] = "Problem's themes";
+}
+
+    <p><h1>Problem's Themes</h1></p>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <!-- <th>
+        @Html.DisplayNameFor(model => model.Id)
+    </th>-->
+            <th>
+                @Html.DisplayNameFor(model => model.Problem)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Theme)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <!--<td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>-->
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProblemId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Theme.ThemeName)
+                </td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+            
+        }
+        
+    </tbody>
+</table>
+<p>
+    <div class="btn btn-success" onclick="location.href='@Url.Action("Create", "ProblemThemes", new { id = ViewBag.ProblemId })'">
+        Add new theme
+    </div>
+</p>
+<p>
+    @Html.ActionLink("Back to problem", "Details","Problems", new { id = ViewBag.ProblemId })
+</p>
+<input type="hidden" value="@ViewBag.ProblemId" name="themeId" />

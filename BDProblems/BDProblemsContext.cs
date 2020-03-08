@@ -40,7 +40,7 @@ namespace BDProblems
 
                 entity.Property(e => e.GradeName)
                     .IsRequired()
-                    .HasColumnName("Grade")
+                    .HasColumnName("GradeName")
                     .HasColumnType("text");
             });
 
@@ -71,6 +71,7 @@ namespace BDProblems
                     .HasForeignKey(d => d.SourceId)
                     .HasConstraintName("FK_Problem_Source");
             });
+            modelBuilder.Entity<ProblemGrade>().HasKey(t => new { t.ProblemId, t.GradeId });
 
             modelBuilder.Entity<ProblemGrade>(entity =>
             {
@@ -88,7 +89,7 @@ namespace BDProblems
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ProblemGrade_Problem");
             });
-
+            modelBuilder.Entity<ProblemTheme>().HasKey(t => new { t.ProblemId, t.ThemeId });
             modelBuilder.Entity<ProblemTheme>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -111,7 +112,7 @@ namespace BDProblems
                 entity.Property(e => e.Info).HasColumnType("text");
 
                 entity.Property(e => e.SourceName)
-                    .HasColumnName("Source")
+                    .HasColumnName("SourceName")
                     .HasColumnType("text");
             });
 

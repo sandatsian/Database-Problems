@@ -12,8 +12,8 @@ namespace BDProblems
         }
 
         public int Id { get; set; }
-        [Required(ErrorMessage = "Поле не може бути порожнім")]
-        [Display(Name = "Назва теми")]
+        [Required(ErrorMessage = "It's empty!")]
+        [Display(Name = "Level Name")]
         public string Name { get; set; }
 
         public virtual ICollection<Problem> Problem { get; set; }

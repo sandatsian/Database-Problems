@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BDProblems
 {
@@ -11,6 +12,8 @@ namespace BDProblems
         }
 
         public int Id { get; set; }
+        [Required(ErrorMessage = "It's empty!")]
+        [Display(Name = "Grade Name")]
         public string GradeName { get; set; }
 
         public virtual ICollection<ProblemGrade> ProblemGrade { get; set; }

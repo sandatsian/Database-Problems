@@ -1,14 +1,13 @@
 ﻿@model IEnumerable<BDProblems.Theme>
 
 @{
-    ViewData["Title"] = "Задачі за темами";
+    ViewData["Title"] = "Problems ordered by themes";
 }
-
-    <h1>Задачі за темою @ViewBag.ThemeName</h1>
-
-<p>
-    <a asp-action="Create" asp-route-id="@ViewBag.ThemeId">Додати нову тему</a>
-</p>
+    <p>
+        <div class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Themes")'">
+            Add new theme
+        </div>
+    </p>
 <table class="table">
     <thead>
         <tr>
@@ -19,17 +18,20 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ThemeName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Задачі</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ThemeName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Problems</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+        
     </tbody>
 </table>
+

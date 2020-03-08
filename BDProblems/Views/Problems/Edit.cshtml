@@ -4,9 +4,8 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+    <p><h1>Edit your ptoblem</h1></p>
 
-<h4>Problem</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,14 +13,14 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Solution" class="control-label"></label>
-                <input asp-for="Solution" class="form-control" />
-                <span asp-validation-for="Solution" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Statement" class="control-label"></label>
                 <input asp-for="Statement" class="form-control" />
                 <span asp-validation-for="Statement" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Solution" class="control-label"></label>
+                <input asp-for="Solution" class="form-control" />
+                <span asp-validation-for="Solution" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LevelId" class="control-label"></label>
@@ -33,15 +32,26 @@
                 <select asp-for="SourceId" class="form-control" asp-items="ViewBag.SourceId"></select>
                 <span asp-validation-for="SourceId" class="text-danger"></span>
             </div>
+            <p>
+                <div class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "ProblemThemes", new { id = Model.Id })'">
+                    Edit themes for this problem
+                </div>
+            </p>
+            <p>
+                <div class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "ProblemGrades", new { id = Model.Id })'">
+                    Edit grades for this problem
+                </div>
+            </p>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
+
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @Html.ActionLink("Back To List", "Index", "Themes")
 </div>
 
 @section Scripts {

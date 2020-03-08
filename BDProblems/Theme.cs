@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace BDProblems
 {
@@ -11,9 +13,11 @@ namespace BDProblems
             ProblemTheme = new HashSet<ProblemTheme>();
         }
 
+        [Key()]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Required(ErrorMessage = "Поле не може бути порожнім")]
-        [Display(Name = "Назва теми")]
+        [Required(ErrorMessage = "It's empty!")]
+        [Display(Name = "Theme Name")]
         public string ThemeName { get; set; }
 
         public virtual ICollection<ProblemTheme> ProblemTheme { get; set; }
