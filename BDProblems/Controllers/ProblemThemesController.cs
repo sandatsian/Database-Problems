@@ -21,7 +21,7 @@ namespace BDProblems.Controllers
         // GET: ProblemThemes
         public async Task<IActionResult> Index(int? id)
         {
-            ViewData["ProblemId"] = id;
+            ViewBag.ProblemId = id;
             var bDProblemsContext = _context.ProblemTheme.Where(p => p.ProblemId == id).Include(p => p.Theme);
             return View(await bDProblemsContext.ToListAsync());
         }
@@ -49,9 +49,8 @@ namespace BDProblems.Controllers
         // GET: ProblemThemes/Create
         public IActionResult Create(int? id)
         {
-            ViewData["ProblemId"] = id;
             List<int?> theme = _context.ProblemTheme.Where(p => p.ProblemId == id).Select(t => t.ThemeId).ToList();
-           
+            ViewBag.ProblemId = id;
             ViewData["ThemeId"] = new SelectList(_context.Theme.Where(t => theme.Contains(t.Id) == false), "Id", "ThemeName");
             return View();
         }
@@ -78,13 +77,13 @@ namespace BDProblems.Controllers
             problemTheme.Theme = _context.Theme.Where(t => t.Id == problemTheme.ThemeId).FirstOrDefault();
             if (ModelState.IsValid)
             {
-                _context.ProblemTheme.Add(problemTheme);
+                _context.Add(problemTheme);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "ProblemThemes", new { id = problemTheme.ProblemId });
             }
             //ViewData["ProblemId"] = new SelectList(_context.Problem, "Id", "Id", problemTheme.ProblemId);
             //ViewData["ThemeId"] = new SelectList(_context.Theme, "Id", "ThemeName", problemTheme.ThemeId);
-            return RedirectToAction("Index", "ProblemThemes", new { id = problemTheme.ProblemId});
+            return RedirectToAction("Index", "ProblemThemes", new { id = problemTheme.ProblemId });
         }
 
         // GET: ProblemThemes/Edit/5
@@ -170,7 +169,7 @@ namespace BDProblems.Controllers
             int? pId = p.ProblemId;
             int? tId = p.ThemeId;
             var problemTheme = await _context.ProblemTheme.FindAsync(pId, tId);
-            
+
             _context.ProblemTheme.Remove(problemTheme);
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", "Problems", new { id = pId });

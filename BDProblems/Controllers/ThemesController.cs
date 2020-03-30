@@ -4,8 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore;
 using BDProblems;
+using Microsoft.AspNetCore.Http;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace BDProblems.Controllers
 {
@@ -53,12 +57,47 @@ namespace BDProblems.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ThemeName")] Theme theme)
         {
-            foreach(var item in _context.Theme)
+            int i = 0;
+            HashSet<char> setBig = new HashSet<char>();
+            for (i = 192; i < 224; i++)
+            {
+                setBig.Add((char)i);
+            }
+            setBig.Add((char)175);
+            setBig.Add((char)178);
+
+            HashSet<char> setSmall = new HashSet<char>();
+            for (i = 224; i < 256; i++)
+            {
+                setSmall.Add((char)i);
+            }
+            setSmall.Add((char)180);
+            setSmall.Add((char)179);
+            setSmall.Add(' ');
+
+            string name = theme.ThemeName;
+            string finalName = "";
+            i = 0;
+            while (name[i] == ' ')
+            {
+                i++;
+            }
+            for (int j = i; j < name.Length; j++)
+            {
+                if (setSmall.Contains(name[i]))
+                    finalName.Append((char)(name[i] - 32));
+                if (j > i && !setSmall.Contains(name[j]))
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+            theme.ThemeName = finalName;
+            foreach (var item in _context.Theme)
             {
                 if (item.ThemeName == theme.ThemeName)
                     return RedirectToAction("Index");
             }
-            
+
             if (_context.Theme.Count().Equals(0)) theme.Id = 0;
             else theme.Id = _context.Theme.Max(pt => pt.Id) + 1;
             if (ModelState.IsValid)
@@ -157,6 +196,127 @@ namespace BDProblems.Controllers
         private bool ThemeExists(int id)
         {
             return _context.Theme.Any(e => e.Id == id);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Import(IFormFile fileExcel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (fileExcel != null)
+                {
+                    using (var stream = new System.IO.FileStream(fileExcel.FileName, FileMode.Create))
+                    {
+                        await fileExcel.CopyToAsync(stream);
+                        using (XLWorkbook workBook = new XLWorkbook(stream, XLEventTracking.Disabled))
+                        {
+                            foreach (IXLWorksheet worksheet in workBook.Worksheets)
+                            {
+                                /*Theme newTheme;
+                                var t = _context.Theme.Where(p => p.ThemeName == worksheet.Name).ToList();
+                                //var t = (from theme in _context.Theme
+                                //         where theme.ThemeName == worksheet.Name
+                                //         select theme).ToList();
+                                if(t.Count > 0)
+                                {
+                                    newTheme = t[0];
+                                }
+                                else
+                                {
+                                    newTheme = new Theme();
+                                    newTheme.ThemeName = worksheet.Name;
+                                    _context.Theme.Add(newTheme);
+                                }*/
+                                Theme newTheme = new Theme();
+                                newTheme.ThemeName = worksheet.Name;
+                                foreach (var t in _context.Theme)
+                                {
+                                    if (t.ThemeName == newTheme.ThemeName)
+                                        break;
+                                    else
+                                        _context.Theme.Add(newTheme);
+                                }
+                                foreach (IXLRow row in worksheet.RowsUsed().Skip(1))
+                                {
+                                    try
+                                    {
+                                        Problem problem = new Problem();
+                                        problem.Statement = row.Cell(1).Value.ToString();
+                                        problem.Solution = row.Cell(2).Value.ToString();
+                                        problem.LevelId = (int)_context.Level.Where(p => p.Name == row.Cell(3).Value.ToString()).FirstOrDefault().Id;
+                                        problem.SourceId = (int)_context.Source.Where(p => p.SourceName == row.Cell(4).Value.ToString()).FirstOrDefault().Id;
+                                        ProblemGrade pg = new ProblemGrade();
+                                        pg.ProblemId = problem.Id;
+                                        pg.GradeId = (int)_context.Grade.Where(g => g.GradeName == row.Cell(5).Value.ToString()).FirstOrDefault().Id;
+                                        _context.ProblemGrade.Add(pg);
+                                        ProblemTheme pt = new ProblemTheme();
+                                        pt.ProblemId = problem.Id;
+                                        pt.ThemeId = (int)_context.Theme.Where(g => g.ThemeName == newTheme.ThemeName).FirstOrDefault().Id;
+                                        _context.ProblemTheme.Add(pt);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        return RedirectToAction(nameof(Index));
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        public ActionResult Export()
+        {
+            using (XLWorkbook workbook = new XLWorkbook(XLEventTracking.Disabled))
+            {
+                var themes = _context.Theme.ToList();
+                foreach (var t in themes)
+                {
+                    var worksheet = workbook.Worksheets.Add(t.ThemeName);
+                    worksheet.Cell("A1").Value = "Statement";
+                    worksheet.Cell("B1").Value = "Solution";
+                    worksheet.Cell("C1").Value = "Level";
+                    worksheet.Cell("D1").Value = "Source";
+                    worksheet.Cell("E1").Value = "Grade";
+                    worksheet.Row(1).Style.Font.Bold = true;
+                    var problemsThemes = _context.ProblemTheme.Where(p => p.ThemeId == t.Id);
+                    var problems = from p in _context.Problem
+                                   join pt in problemsThemes on p.Id equals pt.ProblemId
+                                   select p;
+                    List<Problem> prob = problems.ToList();
+
+                    for (int i = 0; i < problems.Count(); i++)
+                    {
+                        worksheet.Cell(i + 2, 1).Value = prob[i].Statement;
+                        worksheet.Cell(i + 2, 2).Value = prob[i].Solution;
+                        worksheet.Cell(i + 2, 3).Value = _context.Level.Where(p => p.Id == prob[i].LevelId).FirstOrDefault().Name;
+                        worksheet.Cell(i + 2, 4).Value = _context.Source.Where(p => p.Id == prob[i].SourceId).FirstOrDefault().SourceName;
+                        var grade = _context.ProblemGrade.Where(p => p.ProblemId == prob[i].Id).FirstOrDefault();
+                        if (grade != null)
+                        {
+                            worksheet.Cell(i + 2, 5).Value = grade.GradeId + 1;
+                        }
+
+                    }
+                }
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    stream.Flush();
+                    return new FileContentResult(stream.ToArray(),
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    {
+                        FileDownloadName = $"Problems_{DateTime.UtcNow.ToShortDateString()}.xlsx"
+                    };
+                }
+
+
+
+            }
+
         }
     }
 }

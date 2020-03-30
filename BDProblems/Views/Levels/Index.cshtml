@@ -3,11 +3,11 @@
 @{
     ViewData["Title"] = "Problems ordered by Levels";
 }
-    <p>
-        <div class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Levels")'">
-            Add new level
-        </div>
-    </p>
+<p>
+    <div class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Levels")'">
+        Add new level
+    </div>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -32,3 +32,29 @@
         }
     </tbody>
 </table>
+
+<div class="container">
+    <div id="chartLevels"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            $.get('/api/Charts/JsonDataLevels', function (jsonData) {
+                data = google.visualization.arrayToDataTable(jsonData, false);
+                var option = {
+                    title: "Problems by levels",
+                    width: 500,
+                    height: 400
+                };
+                chart = new google.visualization.ColumnChart(document.getElementById('chartLevels'));
+                chart.draw(data, option);
+            })
+
+        }
+    </script>
+}

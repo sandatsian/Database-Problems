@@ -3,35 +3,52 @@
 @{
     ViewData["Title"] = "Problems ordered by themes";
 }
-    <p>
-        <div class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Themes")'">
-            Add new theme
-        </div>
-    </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ThemeName)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+
+    <div>
+        <h3>Select .xsls file</h3>
+        @using (Html.BeginForm("Import", "Themes", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ThemeName)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Problems</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+            <div>
+                Load .xsls file
+                <input type="file" name="fileExcel" id="fileExcel" />
+                <div>
+                    <input type="submit" value="Load" class="btn btn-primary" />
+                </div>
+            </div>
         }
-        
-    </tbody>
-</table>
+        <p>
+            <div class="btn btn-primary" onclick="location.href='@Url.Action("Export", "Themes")'">
+                Download .xsl file
+            </div>
+        <p>
+            <div class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Themes")'">
+                Add new theme
+            </div>
+        </p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ThemeName)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ThemeName)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Problems</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
 

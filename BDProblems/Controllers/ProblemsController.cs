@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BDProblems;
 
+
 namespace BDProblems.Controllers
 {
     public class ProblemsController : Controller
@@ -40,17 +41,18 @@ namespace BDProblems.Controllers
             var problem = await _context.Problem
                 .Include(p => p.Level)
                 .Include(p => p.Source)
-                
+
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            
+
             if (problem == null)
             {
                 return NotFound();
             }
+            ViewBag.Theme = _context.ProblemTheme.Where(p => p.ProblemId == id).Select(p => p.Theme).ToList();
             ViewBag.Id = problem.Id;
             return View(problem);
-            
+
         }
 
         // GET: Problems/Create
@@ -71,7 +73,7 @@ namespace BDProblems.Controllers
         {
             problem.Level = _context.Level.Where(l => l.Id == problem.LevelId).FirstOrDefault();
             problem.Source = _context.Source.Where(s => s.Id == problem.SourceId).FirstOrDefault();
-            if (_context.Problem.Count().Equals(0))  problem.Id = 0;
+            if (_context.Problem.Count().Equals(0)) problem.Id = 0;
             else problem.Id = _context.Problem.Max(pt => pt.Id) + 1;
 
             if (themeId != null)
@@ -81,12 +83,12 @@ namespace BDProblems.Controllers
                     ptId = _context.ProblemTheme.Max(pt => pt.Id) + 1;
                 problem.ProblemTheme.Add(new ProblemTheme { Id = ptId, ThemeId = themeId, ProblemId = problem.Id });
             }
-          
-            
+
+
             if (ModelState.IsValid)
             {
-                    _context.Add(problem);
-                
+                _context.Add(problem);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Themes");
                 //return RedirectToAction("Index", "Problems", new { id = themeId, name = _context.Theme.Where(t => t.Id == themeId).FirstOrDefault().ThemeName });  
@@ -113,7 +115,7 @@ namespace BDProblems.Controllers
         }
 
         // POST: Problems/Edit/5
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Solution,Statement,LevelId,SourceId")] Problem problem)
@@ -122,7 +124,7 @@ namespace BDProblems.Controllers
             {
                 return NotFound();
             }
-            
+
             if (ModelState.IsValid)
             {
                 try
@@ -168,7 +170,7 @@ namespace BDProblems.Controllers
             }
 
             return View(problem);
-           ;
+            ;
         }
 
         // POST: Problems/Delete/5
@@ -186,5 +188,7 @@ namespace BDProblems.Controllers
         {
             return _context.Problem.Any(e => e.Id == id);
         }
+
+
     }
 }

@@ -3,11 +3,11 @@
 @{
     ViewData["Title"] = "Index";
 }
-    <p>
-        <div class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Sources")'">
-            Add new source
-        </div>
-    </p>
+<p>
+    <div class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Sources")'">
+        Add new source
+    </div>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -38,3 +38,29 @@
         }
     </tbody>
 </table>
+
+<div class="container">
+    <div id="chartSources"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            $.get('/api/Charts/JsonDataSources', function (jsonData) {
+                data = google.visualization.arrayToDataTable(jsonData, false);
+                var option = {
+                    title: "Problems by sources",
+                    width: 500,
+                    height: 400
+                };
+                chart = new google.visualization.PieChart(document.getElementById('chartSources'));
+                chart.draw(data, option);
+            })
+
+        }
+    </script>
+}

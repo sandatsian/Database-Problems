@@ -1,0 +1,16 @@
+﻿@model IEnumerable<BDProblems.Models.User>
+
+<h2>User List</h2>
+<table class="table">
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.UserName</td>
+            <td>
+                <a class="btn btn-block" asp-action="Edit" asp-route-id="@user.Id">Access rights</a>
+            </td>
+        </tr>
+    }
+
+</table>
+

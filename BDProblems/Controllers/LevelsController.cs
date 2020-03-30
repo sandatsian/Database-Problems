@@ -30,9 +30,9 @@ namespace BDProblems.Controllers
             if (id == null) return RedirectToAction("Levels", "Index");
             ViewBag.LevelId = id;
             ViewBag.LevelName = _context.Level.Where(t => t.Id == id).FirstOrDefault().Name;
-            
+
             var bDProblemsContext = _context.Problem.Where(p => p.LevelId == id);
-            
+
             return View(await bDProblemsContext.ToListAsync());
 
 
@@ -56,8 +56,8 @@ namespace BDProblems.Controllers
                 if (item.Name == level.Name)
                     return RedirectToAction("Index");
             }
-            if (_context.Level.Count().Equals(0)) level.Id = 0;
-                else level.Id = _context.Level.Max(pt => pt.Id) + 1;
+            if (_context.Level.Count() == 0) level.Id = 0;
+            else level.Id = _context.Level.Max(pt => pt.Id) + 1;
             if (ModelState.IsValid)
             {
                 _context.Add(level);

@@ -58,7 +58,7 @@ namespace BDProblems.Controllers
                     return RedirectToAction("Index");
             }
             if (_context.Grade.Count().Equals(0)) grade.Id = 0;
-                else grade.Id = _context.Grade.Max(pt => pt.Id) + 1;
+            else grade.Id = _context.Grade.Max(pt => pt.Id) + 1;
             if (ModelState.IsValid)
             {
                 _context.Add(grade);

@@ -56,7 +56,7 @@ namespace BDProblems.Controllers
                     return RedirectToAction("Index");
             }
             if (_context.Source.Count().Equals(0)) source.Id = 0;
-                else source.Id = _context.Source.Max(pt => pt.Id) + 1;
+            else source.Id = _context.Source.Max(pt => pt.Id) + 1;
             if (ModelState.IsValid)
             {
                 _context.Add(source);
