@@ -10509,11 +10509,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "G:\\Programming\\2\\istp\\BDProblems2\\BDProblems\\BDProblems.csproj",
+      "projectUniqueName": "G:\\Programming\\2\\istp\\BDProblems_new\\BDProblems\\BDProblems.csproj",
       "projectName": "BDProblems",
-      "projectPath": "G:\\Programming\\2\\istp\\BDProblems2\\BDProblems\\BDProblems.csproj",
+      "projectPath": "G:\\Programming\\2\\istp\\BDProblems_new\\BDProblems\\BDProblems.csproj",
       "packagesPath": "C:\\Users\\Polina\\.nuget\\packages\\",
-      "outputPath": "G:\\Programming\\2\\istp\\BDProblems2\\BDProblems\\obj\\",
+      "outputPath": "G:\\Programming\\2\\istp\\BDProblems_new\\BDProblems\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Polina\\AppData\\Roaming\\NuGet\\NuGet.Config",

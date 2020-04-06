@@ -8,6 +8,6 @@ namespace BDProblems.Models
 {
     public class User : IdentityUser
     {
-        public string Username { get; set; }
+        //public string Username { get; set; }
     }
 }

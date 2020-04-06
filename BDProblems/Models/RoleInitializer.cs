@@ -10,9 +10,9 @@ namespace BDProblems.Models
     {
         public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            string adminEmail = "sandpolser@gmail.com";
-            string password = "password";
-            if (await roleManager.FindByNameAsync("admin") == null)
+            string adminEmail = "admin@gmail.com";
+            string password = "Passw0r@";
+            if (await roleManager.FindByNameAsync("admin") == null) //Hello0 Hello0@
             {
                 await roleManager.CreateAsync(new IdentityRole("admin"));
             }
@@ -22,7 +22,7 @@ namespace BDProblems.Models
             }
             if (await userManager.FindByEmailAsync(adminEmail) == null)
             {
-                User admin = new User { Email = adminEmail, UserName = "admin", Username = "admin" };
+                User admin = new User { Email = adminEmail, UserName = "admin" };
                 IdentityResult result = await userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {

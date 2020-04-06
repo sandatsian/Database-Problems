@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BDProblems;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BDProblems.Controllers
 {
+   
+    [Authorize(Roles = "admin, user")]
     public class LevelsController : Controller
     {
         private readonly BDProblemsContext _context;

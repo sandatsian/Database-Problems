@@ -5,11 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using BDProblems.ViewModel;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using BDProblems;
 
 
 namespace BDProblems.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class ProblemsController : Controller
     {
         private readonly BDProblemsContext _context;

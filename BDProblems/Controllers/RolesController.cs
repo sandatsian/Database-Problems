@@ -13,18 +13,21 @@ namespace BDProblems.Controllers
     [Authorize(Roles="admin")]
     public class RolesController : Controller
     {
-        RoleManager<IdentityRole> _roleManager;
-        UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
         public RolesController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
             _roleManager = roleManager;
             _userManager = userManager;
+            
         }
         public IActionResult Index() => View(_roleManager.Roles.ToList());
 
         public IActionResult UserList() => View(_userManager.Users.ToList());
+        
         public async Task<IActionResult> Edit(string userId)
         {
+            string s = userId;
             User user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
@@ -33,6 +36,7 @@ namespace BDProblems.Controllers
                 ChangeRoleViewModel model = new ChangeRoleViewModel
                 {
                     UserId = user.Id,
+                    UserName = user.UserName,
                     UserEmail = user.Email,
                     UserRoles = userRoles,
                     AllRoles = allRoles
@@ -43,6 +47,7 @@ namespace BDProblems.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string userId, List<string> roles)
         {
             User user = await _userManager.FindByIdAsync(userId);

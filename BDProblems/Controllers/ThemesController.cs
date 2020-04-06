@@ -10,9 +10,11 @@ using BDProblems;
 using Microsoft.AspNetCore.Http;
 using ClosedXML.Excel;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BDProblems.Controllers
 {
+    [Authorize(Roles = "admin, user")]
     public class ThemesController : Controller
     {
         private readonly BDProblemsContext _context;
